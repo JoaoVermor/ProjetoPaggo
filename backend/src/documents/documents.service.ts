@@ -24,7 +24,7 @@ export class DocumentsService {
   }
 
   async createDocumentWithOcr(file: Express.Multer.File, userId: string) {
-    // 1. Converta o arquivo para base64 com o prefixo correto
+    
     const fileBase64 = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
 
     
