@@ -27,19 +27,19 @@ export class DocumentsService {
     // 1. Converta o arquivo para base64 com o prefixo correto
     const fileBase64 = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
 
-    // 2. Extraia o texto usando Tesseract
+    
     const { data } = await Tesseract.recognize(file.buffer, 'por');
     const extractedText = data.text;
 
-    // 3. Salve tudo no MongoDB
+    
     const document = await this.prisma.document.create({
       data: {
         fileName: file.originalname,
         fileType: file.mimetype,
         fileBase64,
         userId,
-        fileUrl: '', // Adicionando campo obrigatório
-        fileId: '', // Adicionando campo obrigatório
+        fileUrl: '',
+        fileId: '',
         extractedText,
         status: 'COMPLETED',
       },
@@ -64,7 +64,7 @@ export class DocumentsService {
 
     return documents.map(doc => ({
       ...doc,
-      imageBase64: doc.fileBase64, // Renomeando para manter compatibilidade com o frontend
+      imageBase64: doc.fileBase64,
     }));
   }
 
@@ -83,7 +83,7 @@ export class DocumentsService {
       const outputDir = join(process.cwd(), 'uploads', 'temp');
       await execAsync(`pdftoppm -png "${filePath}" "${outputDir}/page"`);
       
-      // Processar cada página do PDF
+      
       const fs = require('fs');
       const files = fs.readdirSync(outputDir).filter(file => file.startsWith('page-') && file.endsWith('.png'));
       
@@ -92,11 +92,11 @@ export class DocumentsService {
         const { data } = await Tesseract.recognize(imagePath, 'por');
         extractedText += data.text + '\n';
         
-        // Limpar arquivo temporário
+        
         fs.unlinkSync(imagePath);
       }
       
-      // Remover diretório temporário
+      
       fs.rmdirSync(outputDir);
     } else {
       // Processamento normal para imagens
